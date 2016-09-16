@@ -50,10 +50,8 @@ class FUNCyms:
                                 "installing ONOS, start ONOS."
 
         PULLCODE = False
-
         if main.params[ 'GIT' ][ 'pull' ] == 'True':
             PULLCODE = True
-
         gitBranch = main.params[ 'GIT' ][ 'branch' ]
 
         gitOnosYangTools = main.params[ 'GIT' ][ 'gitOnosYangTools' ]
@@ -115,20 +113,16 @@ class FUNCyms:
 
         # Git clone all the dependencies and clean install
         main.step( "Git clone and build " + gitOnosYangTools )
-        main.ymsFunction.gitClone( main.dependencyPath, gitOnosYangTools )
-        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'onos-yang-tools' )
+        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitOnosYangTools )
 
         main.step( "Git clone and build " + gitYms )
-        main.ymsFunction.gitClone( main.dependencyPath, gitYms )
-        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'ymsm' )
+        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitYms )
 
         main.step( "Git clone and build " + gitRestConf )
-        main.ymsFunction.gitClone( main.dependencyPath, gitRestConf )
-        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'restconf' )
+        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitRestConf )
 
         main.step( "Git clone and build " + gitYmsTest )
-        main.ymsFunction.gitClone( main.dependencyPath, gitYmsTest )
-        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'ymstest' )
+        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitYmsTest )
 
         cleanInstallResult = main.TRUE
         gitPullResult = main.FALSE

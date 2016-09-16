@@ -34,7 +34,7 @@
         <branch>master</branch>
 
         <gitOnosYangTools>https://github.com/opennetworkinglab/onos-yang-tools.git</gitOnosYangTools>
-        <gitYms>https://github.com/GauravAgrawal-Huawei/ymsm</gitYms>
+        <gitYms>https://github.com/GauravAgrawal-Huawei/ymsm.git</gitYms>
         <gitRestConf>https://github.com/SojanKoshy/restconf.git</gitRestConf>
         <gitYmsTest>https://github.com/SojanKoshy/ymstest.git</gitYmsTest>
     </GIT>
