@@ -10,8 +10,8 @@
     <testcases>1</testcases>
 
     <DEPENDENCY>
-        <path>/tests/FUNC/FUNCyms/Dependencies/</path>
-        <wrapper1>yms</wrapper1>
+        <path>/tests/FUNC/FUNCyms/dependencies/</path>
+        <wrapper1>ymsFunction</wrapper1>
     </DEPENDENCY>
 
     <ENV>

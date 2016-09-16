@@ -43,8 +43,10 @@ class FUNCyms:
         """
 
         import os
-        main.log.info( "ONOS Single node start " +
-                         "Scapy Tool - initialization" )
+        import imp
+        import re
+        
+        main.log.info( "ONOS Single node start " )
         main.case( "Setting up test environment" )
         main.caseExplanation = "Setup the test environment including " +\
                                 "installing ONOS, start ONOS."
@@ -111,18 +113,19 @@ class FUNCyms:
             killed = main.ONOSbench.onosKill( node.ip_address )
             killResults = killResults and killed
 
-        # Git clone all the dependencies and clean install
+        # Git clone all the dependent apps and clean install
+        appsPath = main.dependencyPath + 'apps'        
         main.step( "Git clone and build " + gitOnosYangTools )
-        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitOnosYangTools )
+        #main.ymsFunction.gitCloneAndBuild( main, appsPath, gitOnosYangTools )
 
         main.step( "Git clone and build " + gitYms )
-        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitYms )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, gitYms )
 
         main.step( "Git clone and build " + gitRestConf )
-        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitRestConf )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, gitRestConf )
 
         main.step( "Git clone and build " + gitYmsTest )
-        main.ymsFunction.gitCloneAndBuild( main, main.dependencyPath, gitYmsTest )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, gitYmsTest )
 
         cleanInstallResult = main.TRUE
         gitPullResult = main.FALSE
