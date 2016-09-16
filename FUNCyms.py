@@ -6,8 +6,8 @@ This Test check the YMS functionality for NB and SB
 
 List of test cases:
 CASE1: Compile ONOS and push it to the test machines
-CASE2: 
-CASE3: 
+CASE2:
+CASE3:
 Case4: Uninstalling the app
 """
 class FUNCyms:
@@ -15,7 +15,7 @@ class FUNCyms:
     def __init__( self ):
         self.default = ''
 
-            
+
     def CASE1( self, main ):
         """
         CASE1 is to compile ONOS and push it to the test machines
@@ -43,8 +43,6 @@ class FUNCyms:
         """
 
         import os
-        from tests.FUNC.FUNCyms.dependencies.common import Common
-        yms = Common()
         main.log.info( "ONOS Single node start " +
                          "Scapy Tool - initialization" )
         main.case( "Setting up test environment" )
@@ -52,32 +50,30 @@ class FUNCyms:
                                 "installing ONOS, start ONOS."
 
         PULLCODE = False
+
         if main.params[ 'GIT' ][ 'pull' ] == 'True':
             PULLCODE = True
+
         gitBranch = main.params[ 'GIT' ][ 'branch' ]
 
-        pullOnosYangTools = False
-        if main.params[ 'GIT' ][ 'pullOnosYangTools' ] == 'True':
-            pullOnosYangTools = True
         gitOnosYangTools = main.params[ 'GIT' ][ 'gitOnosYangTools' ]
-
-        pullYms = False
-        if main.params[ 'GIT' ][ 'pullYms' ] == 'True':
-            pullYms = True
-        gitYms = main.params[ 'GIT' ][ 'gitYms' ]
-
-        pullRestConf = False
-        if main.params[ 'GIT' ][ 'pullRestConf' ] == 'True':
-            pullRestConf = True
         gitRestConf = main.params[ 'GIT' ][ 'gitRestConf' ]
-        
-        pullYmsTest = False
-        if main.params[ 'GIT' ][ 'pullYmsTest' ] == 'True':
-            pullYmsTest = True
+        gitYms = main.params[ 'GIT' ][ 'gitYms' ]
         gitYmsTest = main.params[ 'GIT' ][ 'gitYmsTest' ]
 
         cellName = main.params[ 'ENV' ][ 'cellName' ]
         ipList = os.getenv( main.params[ 'CTRL' ][ 'ip1' ] )
+
+
+        main.testOnDirectory = re.sub( "(/tests)$", "", main.testDir )
+        main.dependencyPath = main.testOnDirectory + \
+                                  main.params[ 'DEPENDENCY' ][ 'path' ]
+
+        wrapperFile1 = main.params[ 'DEPENDENCY' ][ 'wrapper1' ]
+        main.ymsFunction = imp.load_source( wrapperFile1,
+                                            main.dependencyPath +
+                                            wrapperFile1 +
+                                            ".py" )
 
         main.log.info( "Removing raft logs" )
         main.ONOSbench.onosRemoveRaftLogs()
@@ -109,7 +105,7 @@ class FUNCyms:
         cellResult = main.ONOSbench.setCell( cellName )
 
         verifyResult = main.ONOSbench.verifyCell()
-       
+
         # Make sure ONOS process is not running
         main.log.info( "Killing any ONOS processes" )
         killResults = main.TRUE
@@ -117,37 +113,23 @@ class FUNCyms:
             killed = main.ONOSbench.onosKill( node.ip_address )
             killResults = killResults and killed
 
-        # Git clone all the dependencies
-        path = "/home/sdn/OnosSystemTest/TestON/tests/FUNC/FUNCyms/dependencies"
-        
+        # Git clone all the dependencies and clean install
         main.step( "Git clone and build " + gitOnosYangTools )
-        main.ONOSbench.handle.sendline("cd " + path)
-        main.ONOSbench.handle.expect( "\$" )
-        main.ONOSbench.handle.sendline("git clone " + gitOnosYangTools)
-        main.ONOSbench.handle.expect( "\$" )     
-        yms.mvnCleanInstall('onos-yang-tools')
-        
-        main.step( "Git clone and build " + gitYms )   
-        main.ONOSbench.handle.sendline("cd " + path) 
-        main.ONOSbench.handle.expect( "\$" )
-        main.ONOSbench.handle.sendline("git clone " + gitYms)
-        main.ONOSbench.handle.expect( "\$" )
-        yms.mvnCleanInstall('ymsm')  
-        
+        main.ymsFunction.gitClone( main.dependencyPath, gitOnosYangTools )
+        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'onos-yang-tools' )
+
+        main.step( "Git clone and build " + gitYms )
+        main.ymsFunction.gitClone( main.dependencyPath, gitYms )
+        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'ymsm' )
+
         main.step( "Git clone and build " + gitRestConf )
-        main.ONOSbench.handle.sendline("cd " + path)
-        main.ONOSbench.handle.expect( "\$" )
-        main.ONOSbench.handle.sendline("git clone " + gitRestConf)
-        main.ONOSbench.handle.expect( "\$" )
-        yms.mvnCleanInstall('restconf')
-        
+        main.ymsFunction.gitClone( main.dependencyPath, gitRestConf )
+        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'restconf' )
+
         main.step( "Git clone and build " + gitYmsTest )
-        main.ONOSbench.handle.sendline("cd " + path)
-        main.ONOSbench.handle.expect( "\$" )
-        main.ONOSbench.handle.sendline("git clone " + gitYmsTest)
-        main.ONOSbench.handle.expect( "\$" )
-        yms.mvnCleanInstall('ymstest')
-        
+        main.ymsFunction.gitClone( main.dependencyPath, gitYmsTest )
+        main.ymsFunction.mvnCleanInstall( main.dependencyPath, 'ymstest' )
+
         cleanInstallResult = main.TRUE
         gitPullResult = main.FALSE
         main.step( "Git checkout and pull" + gitBranch )

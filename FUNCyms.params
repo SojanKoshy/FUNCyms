@@ -11,6 +11,7 @@
 
     <DEPENDENCY>
         <path>/tests/FUNC/FUNCyms/Dependencies/</path>
+        <wrapper1>yms</wrapper1>
     </DEPENDENCY>
 
     <ENV>
@@ -29,19 +30,12 @@
     </HTTP>
 
     <GIT>
-        <pull>True</pull>
+        <pull>False</pull>
         <branch>master</branch>
 
-        <pullOnosYangTools>True</pullOnosYangTools>
         <gitOnosYangTools>https://github.com/opennetworkinglab/onos-yang-tools.git</gitOnosYangTools>
-
-        <pullYms>True</pullYms>
         <gitYms>https://github.com/GauravAgrawal-Huawei/ymsm</gitYms>
-
-        <pullRestConf>True</pullRestConf>
         <gitRestConf>https://github.com/SojanKoshy/restconf.git</gitRestConf>
-
-        <pullYmsTest>True</pullYmsTest>
         <gitYmsTest>https://github.com/SojanKoshy/ymstest.git</gitYmsTest>
     </GIT>
 
