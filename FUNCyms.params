@@ -1,0 +1,48 @@
+<PARAMS>
+#**** Scripted by Antony Silvester  - antony.silvester@huawei.com ******
+#This Test check the YMS functionality for NB and SB
+#List of test cases:
+#CASE1: Compile ONOS and push it to the test machines
+#CASE2:
+#CASE3:
+#Case4: Uninstalling the app
+
+    <testcases>1</testcases>
+
+    <DEPENDENCY>
+        <path>/tests/FUNC/FUNCyms/Dependencies/</path>
+    </DEPENDENCY>
+
+    <ENV>
+        <cellName>yms_cell</cellName>
+        <cellApps>drivers,openflow,proxyarp,mobility,yms</cellApps>
+    </ENV>
+
+    <CTRL>
+        <ip1>OC1</ip1>
+        <port1>6653</port1>
+    </CTRL>
+
+    <HTTP>
+        <port>8181</port>
+        <path>/onos/</path>
+    </HTTP>
+
+    <GIT>
+        <pull>True</pull>
+        <branch>master</branch>
+
+        <pullOnosYangTools>True</pullOnosYangTools>
+        <gitOnosYangTools>https://github.com/opennetworkinglab/onos-yang-tools.git</gitOnosYangTools>
+
+        <pullYms>True</pullYms>
+        <gitYms>https://github.com/GauravAgrawal-Huawei/ymsm</gitYms>
+
+        <pullRestConf>True</pullRestConf>
+        <gitRestConf>https://github.com/SojanKoshy/restconf.git</gitRestConf>
+
+        <pullYmsTest>True</pullYmsTest>
+        <gitYmsTest>https://github.com/SojanKoshy/ymstest.git</gitYmsTest>
+    </GIT>
+
+</PARAMS>

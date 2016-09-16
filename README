@@ -1,0 +1,29 @@
+FUNCyms test suite
+
+Summary:
+        This test suite consists of testing basic YMS APIs exposed to northbound
+        apps and southbound drivers/providers. We make use a YMS test app which
+        uses YANG files for its data modelling. Using onos-yang-tools the java
+        files are auto-generated for each of the YANG files. YMS test app provides
+        CLIs to verify various APIs exposed by YMS; such as, service registration at
+        northbound, device schema addition, YANG codec encode and decode in southbound.
+        The following is an overview of the test.
+        Steps:
+            - Activate apps yms, restconf, ymstest
+            - ymstest app register services in YMS
+            - Test POST/PUT/GET/DELETE.. RestConf operations for the services
+            - Verify the app data store contents
+            - ymstest app adds device schema in YMS and YANG codec
+            - Test YANG codec encode/decode flows
+            - Verify the encode/decode output
+
+Topology:
+        The topology consists of only one ONOS controller. The YMS test app in ONOS
+        only tests the YMS APIs at NB and SB. The app is acting as a provider at SB for
+        testing purpose only.
+
+Required:
+        This test requires onos-yang-tools and yms, restconf, ymstest apps. The test
+        will download the above tools and apps code from corresponding git reprository
+        and build. Further clean build is done in onos folder and onos package is
+        generated afterwards.
