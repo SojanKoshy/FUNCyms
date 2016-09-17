@@ -56,11 +56,15 @@ class FUNCyms:
             PULLCODE = True
         gitBranch = main.params[ 'GIT' ][ 'branch' ]
 
-        gitOnosYangTools = main.params[ 'GIT' ][ 'gitOnosYangTools' ]
-        gitRestConf = main.params[ 'GIT' ][ 'gitRestConf' ]
-        gitYms = main.params[ 'GIT' ][ 'gitYms' ]
-        gitYmsTest = main.params[ 'GIT' ][ 'gitYmsTest' ]
+        onosYangToolsUrl = main.params[ 'GIT' ][ 'onosYangToolsUrl' ]
+        ymsUrl = main.params[ 'GIT' ][ 'ymsUrl' ]
+        restconfUrl = main.params[ 'GIT' ][ 'restconfUrl' ]
+        ymstestUrl = main.params[ 'GIT' ][ 'ymstestUrl' ]
 
+        forceBuild = False        
+        if main.params[ 'GIT' ][ 'forceBuild' ] == 'True':
+            forceBuild = True
+            
         cellName = main.params[ 'ENV' ][ 'cellName' ]
         ipList = os.getenv( main.params[ 'CTRL' ][ 'ip1' ] )
 
@@ -115,17 +119,21 @@ class FUNCyms:
 
         # Git clone all the dependent apps and clean install
         appsPath = main.dependencyPath + 'apps'        
-        main.step( "Git clone and build " + gitOnosYangTools )
-        #main.ymsFunction.gitCloneAndBuild( main, appsPath, gitOnosYangTools )
+        main.step( "Git clone and build " + onosYangToolsUrl )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, onosYangToolsUrl,
+                                           forceBuild )
 
-        main.step( "Git clone and build " + gitYms )
-        main.ymsFunction.gitCloneAndBuild( main, appsPath, gitYms )
+        main.step( "Git clone and build " + ymsUrl )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, ymsUrl,
+                                           forceBuild )
 
-        main.step( "Git clone and build " + gitRestConf )
-        main.ymsFunction.gitCloneAndBuild( main, appsPath, gitRestConf )
+        main.step( "Git clone and build " + restconfUrl )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, restconfUrl,
+                                           forceBuild )
 
-        main.step( "Git clone and build " + gitYmsTest )
-        main.ymsFunction.gitCloneAndBuild( main, appsPath, gitYmsTest )
+        main.step( "Git clone and build " + ymstestUrl )
+        main.ymsFunction.gitCloneAndBuild( main, appsPath, ymstestUrl,
+                                           forceBuild )
 
         cleanInstallResult = main.TRUE
         gitPullResult = main.FALSE

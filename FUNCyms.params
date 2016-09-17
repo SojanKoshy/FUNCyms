@@ -33,10 +33,11 @@
         <pull>False</pull>
         <branch>master</branch>
 
-        <gitOnosYangTools>https://github.com/opennetworkinglab/onos-yang-tools.git</gitOnosYangTools>
-        <gitYms>https://github.com/GauravAgrawal-Huawei/ymsm.git</gitYms>
-        <gitRestConf>https://github.com/SojanKoshy/restconf.git</gitRestConf>
-        <gitYmsTest>https://github.com/SojanKoshy/ymstest.git</gitYmsTest>
+        <onosYangToolsUrl>https://github.com/opennetworkinglab/onos-yang-tools.git</onosYangToolsUrl>
+        <ymsUrl>https://github.com/GauravAgrawal-Huawei/ymsm.git</ymsUrl>
+        <restconfUrl>https://github.com/SojanKoshy/restconf.git</restconfUrl>
+        <ymstestUrl>https://github.com/SojanKoshy/ymstest.git</ymstestUrl>
+        <forceBuild>False</forceBuild>
     </GIT>
 
 </PARAMS>
