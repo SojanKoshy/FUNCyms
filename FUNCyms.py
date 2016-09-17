@@ -45,10 +45,10 @@ class FUNCyms:
         import os
         import imp
         import re
-        
+
         main.log.info( "ONOS Single node start " )
         main.case( "Setting up test environment" )
-        main.caseExplanation = "Setup the test environment including " +\
+        main.caseExplanation = "Setup the test environment including " + \
                                 "installing ONOS, start ONOS."
 
         PULLCODE = False
@@ -61,10 +61,10 @@ class FUNCyms:
         restconfUrl = main.params[ 'GIT' ][ 'restconfUrl' ]
         ymstestUrl = main.params[ 'GIT' ][ 'ymstestUrl' ]
 
-        forceBuild = False        
+        forceBuild = False
         if main.params[ 'GIT' ][ 'forceBuild' ] == 'True':
             forceBuild = True
-            
+
         cellName = main.params[ 'ENV' ][ 'cellName' ]
         ipList = os.getenv( main.params[ 'CTRL' ][ 'ip1' ] )
 
@@ -84,7 +84,7 @@ class FUNCyms:
 
         main.CLIs = []
         main.nodes = []
-        main.numCtrls= 1
+        main.numCtrls = 1
 
         for i in range( 1, main.numCtrls + 1 ):
             try:
@@ -118,7 +118,7 @@ class FUNCyms:
             killResults = killResults and killed
 
         # Git clone all the dependent apps and clean install
-        appsPath = main.dependencyPath + 'apps'        
+        appsPath = main.dependencyPath + 'apps'
         main.step( "Git clone and build " + onosYangToolsUrl )
         main.ymsFunction.gitCloneAndBuild( main, appsPath, onosYangToolsUrl,
                                            forceBuild )
@@ -146,7 +146,7 @@ class FUNCyms:
                                       onpass="Git pull successful",
                                       onfail="Git pull failed" )
 
-        #main.ONOSbench.getVersion( report=True )
+        # main.ONOSbench.getVersion( report=True )
 
         main.step( "Using mvn clean install" )
         cleanInstallResult = main.TRUE
@@ -168,7 +168,7 @@ class FUNCyms:
                                      onfail="Failed to create ONOS package" )
 
         main.step( "Installing ONOS package" )
-        onosInstallResult = main.ONOSbench.onosInstall(
+        onosInstallResult = main.ONOSbench.onosInstall( 
                 options="-f", node=main.nodes[0].ip_address )
         utilities.assert_equals( expect=main.TRUE, actual=onosInstallResult,
                                  onpass="ONOS install successful",
@@ -193,7 +193,7 @@ class FUNCyms:
         main.step( "App Ids check" )
         appCheck = main.ONOScli1.appToIDCheck()
 
-        if appCheck !=main.TRUE:
+        if appCheck != main.TRUE:
             main.log.warn( main.CLIs[0].apps() )
             main.log.warn( main.CLIs[0].appIDs() )
             utilities.assert_equals( expect=main.TRUE, actual=appCheck,
@@ -203,4 +203,3 @@ class FUNCyms:
             main.log.error( "Failed to start ONOS,stopping test" )
             main.cleanup()
             main.exit()
-

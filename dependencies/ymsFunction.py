@@ -7,7 +7,7 @@ import os
 import pexpect
 import time
 
-def gitCloneAndBuild( main, path, url, forceBuild=False):
+def gitCloneAndBuild( main, path, url, forceBuild=False ):
     """
     Clones the git url or do git pull.
     Runs mvn clean install in the newly created or pulled directory.
@@ -17,16 +17,16 @@ def gitCloneAndBuild( main, path, url, forceBuild=False):
 
     folder = url.split( "/" )[-1].split( "." )[0]
     dest = path + "/" + folder
-    
-    oldHome = main.ONOSbench.home    
-        
+
+    oldHome = main.ONOSbench.home
+
     main.ONOSbench.handle.sendline( "cd " + path )
     main.ONOSbench.handle.expect( "cd " )
     main.ONOSbench.handle.expect( "\$" )
-    
+
     buildRequired = forceBuild
-    
-    if not os.path.exists( dest ): 
+
+    if not os.path.exists( dest ):
         main.log.info( "Cloning git repository" )
         buildRequired = True
         main.ONOSbench.handle.sendline( "git clone " + url )
@@ -34,15 +34,15 @@ def gitCloneAndBuild( main, path, url, forceBuild=False):
         main.ONOSbench.handle.expect( "\$" )
 
         time.sleep( 1 )
-        
+
         if not os.path.exists( dest ):
             main.log.error( "Cloning git repository failed! " )
             main.cleanup()
             main.exit()
-    else: 
+    else:
         if os.path.exists( dest + "/.git" ):
             main.log.info( "Pulling latest code from github" )
-            
+
             main.ONOSbench.home = folder
             pullResult = main.ONOSbench.gitPull()
             if pullResult == main.TRUE:
@@ -50,17 +50,17 @@ def gitCloneAndBuild( main, path, url, forceBuild=False):
             main.ONOSbench.home = oldHome
         else:
             main.log.warn( "Skipping git pull since folder is already "
-                           + "present and is not git clone" )            
-    if buildRequired:         
+                           + "present and is not git clone" )
+    if buildRequired:
         main.ONOSbench.handle.sendline( "cd " + path )
         main.ONOSbench.handle.expect( "cd " )
-        main.ONOSbench.handle.expect( "\$" )        
-        
+        main.ONOSbench.handle.expect( "\$" )
+
         cleanInstall( main, folder )
     else:
         main.log.warn( "Did not pull new code so skipping mvn clean install" )
-        
-    main.ONOSbench.handle.sendline( "cd " + main.ONOSbench.home  )
+
+    main.ONOSbench.handle.sendline( "cd " + main.ONOSbench.home )
     return main.TRUE
 
 def cleanInstall( main, folder, skipTest=True, mciTimeout=300 ):
@@ -99,7 +99,7 @@ def cleanInstall( main, folder, skipTest=True, mciTimeout=300 ):
                 'Runtime\sEnvironment\sto\scontinue',
                 'BUILD\sFAILURE',
                 'BUILD\sSUCCESS',
-                folder + '\$', 
+                folder + '\$',
                 pexpect.TIMEOUT ], mciTimeout )
             if i == 0:
                 main.log.error( "There is insufficient memory \
@@ -122,7 +122,7 @@ def cleanInstall( main, folder, skipTest=True, mciTimeout=300 ):
                 main.ONOSbench.handle.expect( "\$", timeout=60 )
                 return main.TRUE
             elif i == 4:
-                main.log.error("mvn clean install TIMEOUT!" )
+                main.log.error( "mvn clean install TIMEOUT!" )
                 main.cleanup()
                 main.exit()
             else:
