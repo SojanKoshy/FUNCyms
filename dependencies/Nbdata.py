@@ -44,7 +44,7 @@ class Topology:
       print("output")
       print(postdata)
       
-      #return json.dumps(Dicdata,indent=4)
+      return json.dumps(Dicdata,indent=4)
     
     
     

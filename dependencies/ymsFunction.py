@@ -146,7 +146,7 @@ def startApps( main ):
     """
 
     startResult = main.FALSE
-    startResult = main.ONOScli1.activateApp( appName="org.onosproject.resconf" )
+    startResult = main.ONOScli1.activateApp( appName="org.onosproject.restconf" )
     startResult &= main.ONOScli1.activateApp( appName="org.onosproject.ymstest" )
     return startResult
 

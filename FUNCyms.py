@@ -210,10 +210,21 @@ class FUNCyms:
         - Register service for NB in YMS
         """
 
+        try:
+            from tests.FUNC.FUNCyms.dependencies.Nbdata import Topology
+        except ImportError:
+            main.log.exception( "Something wrong with import file or code error." )
+            main.log.info( "Import Error, please check!" )
+            main.cleanup()
+            main.exit()
+        
+        topology = Topology()
+
         main.step( "Starting Restconf and ymstest app" )
         main.assertReturnString = "Assertion result for starting Restconf and ymstest app"
         testResult = main.ymsFunction.startApps( main )
 
+        main.step( "Register NB service in YMS" )
         utilities.assert_equals( expect=main.TRUE,
                                  actual=testResult,
                                  onpass=main.assertReturnString,
@@ -225,4 +236,12 @@ class FUNCyms:
                                  onpass="ONOS cli startup successful",
                                  onfail="ONOS cli startup failed" )
 
+        
+        main.step( "POST to the registered service with JSON body" )
+        topology_post = topology.postJson()
+
+        main.ONOSrest.user_name = "karaf"
+        main.ONOSrest.pwd = "karaf"
+        poststatus, result = main.ONOSrest.send( '/restconf/data/topology', method="POST", data=topology_post)
+        
         
