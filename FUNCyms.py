@@ -91,48 +91,48 @@ class FUNCyms:
                 ipList.append( main.nodes[ -1 ].ip_address )
             except AttributeError:
                 break
-
+ 
         main.log.info( "Uninstalling ONOS" )
         for node in main.nodes:
             main.ONOSbench.onosUninstall( node.ip_address )
-
+   
         main.step( "Create cell file" )
         cellAppString = main.params[ 'ENV' ][ 'cellApps' ]
-
+  
         main.ONOSbench.createCellFile( main.ONOSbench.ip_address, cellName,
                                        main.ONOSbench.ip_address,
                                        cellAppString, ipList )
-
+  
         main.step( "Applying cell variable to environment" )
         cellResult = main.ONOSbench.setCell( cellName )
-
+  
         verifyResult = main.ONOSbench.verifyCell()
-
+   
         # Make sure ONOS process is not running
         main.log.info( "Killing any ONOS processes" )
         killResults = main.TRUE
         for node in main.nodes:
             killed = main.ONOSbench.onosKill( node.ip_address )
             killResults = killResults and killed
-
+    
         # Git clone all the dependent apps and clean install
         appsPath = main.dependencyPath + 'apps'
         main.step( "Git clone and build " + onosYangToolsUrl )
         main.ymsFunction.gitCloneAndBuild( main, appsPath, onosYangToolsUrl,
                                            forceBuild )
-
+   
         main.step( "Git clone and build " + ymsUrl )
         main.ymsFunction.gitCloneAndBuild( main, appsPath, ymsUrl,
                                            forceBuild )
-
+   
         main.step( "Git clone and build " + restconfUrl )
         main.ymsFunction.gitCloneAndBuild( main, appsPath, restconfUrl,
                                            forceBuild )
-
+   
         main.step( "Git clone and build " + ymstestUrl )
         main.ymsFunction.gitCloneAndBuild( main, appsPath, ymstestUrl,
                                            forceBuild )
-
+   
         cleanInstallResult = main.TRUE
         gitPullResult = main.FALSE
         main.step( "Git checkout and pull" + gitBranch )
@@ -143,9 +143,9 @@ class FUNCyms:
             utilities.assert_lesser( expect=0, actual=gitPullResult,
                                      onpass="Git pull successful",
                                      onfail="Git pull failed" )
-
+   
         # main.ONOSbench.getVersion( report=True )
-
+   
         main.step( "Using mvn clean install" )
         cleanInstallResult = main.TRUE
         if PULLCODE and gitPullResult == main.TRUE:
@@ -157,21 +157,21 @@ class FUNCyms:
                                  actual=cleanInstallResult,
                                  onpass="MCI successful",
                                  onfail="MCI failed" )
-
+   
         main.step( "Creating ONOS package" )
         packageResult = main.ONOSbench.buckBuild()
         utilities.assert_equals( expect=main.TRUE,
                                  actual=packageResult,
                                  onpass="Successfully created ONOS package",
                                  onfail="Failed to create ONOS package" )
-
+  
         main.step( "Installing ONOS package" )
         onosInstallResult = main.ONOSbench.onosInstall( 
                 options="-f", node=main.nodes[ 0 ].ip_address )
         utilities.assert_equals( expect=main.TRUE, actual=onosInstallResult,
                                  onpass="ONOS install successful",
                                  onfail="ONOS install failed" )
-
+    
         main.step( "Checking if ONOS is up yet" )
         print main.nodes[ 0 ].ip_address
         for i in range( 2 ):
@@ -181,17 +181,17 @@ class FUNCyms:
         utilities.assert_equals( expect=main.TRUE, actual=onos1Isup,
                                  onpass="ONOS startup successful",
                                  onfail="ONOS startup failed" )
-        
+            
         main.step( "Starting ONOS CLI sessions" )
         print main.nodes[ 0 ].ip_address
         cliResults = main.ONOScli1.startOnosCli( main.nodes[ 0 ].ip_address )
         utilities.assert_equals( expect=main.TRUE, actual=cliResults,
                                  onpass="ONOS cli startup successful",
                                  onfail="ONOS cli startup failed" )
-
+  
         main.step( "App Ids check" )
         appCheck = main.ONOScli1.appToIDCheck()
-
+   
         if appCheck != main.TRUE:
             main.log.warn( main.CLIs[ 0 ].apps() )
             main.log.warn( main.CLIs[ 0 ].appIDs() )
@@ -209,6 +209,8 @@ class FUNCyms:
         - Start restconf and ymstest apps
         - Register service for NB in YMS
         """
+        
+        import time
 
         try:
             from tests.FUNC.FUNCyms.dependencies.Nbdata import Topology
@@ -235,13 +237,77 @@ class FUNCyms:
         utilities.assert_equals( expect=main.TRUE, actual=cliResults,
                                  onpass="ONOS cli startup successful",
                                  onfail="ONOS cli startup failed" )
-
+        time.sleep(2)
         
-        main.step( "POST to the registered service with JSON body" )
-        topology_post = topology.postJson()
-
         main.ONOSrest.user_name = "karaf"
         main.ONOSrest.pwd = "karaf"
-        poststatus, result = main.ONOSrest.send( '/restconf/data/topology', method="POST", data=topology_post)
         
+        main.step( "POST to the registered service with JSON body" )
+        data = topology.create()
+        status, result = main.ONOSrest.send( '/restconf/data/topology', method="POST", data=data, base="/onos" )
+
+        utilities.assert_equals(
+                expect='201',
+                actual=status,
+                onpass="Post Success",
+                onfail="Post Failed " + str( status ) + "," + str( result ) )                
+         
+        main.step( "PUT to the registered service with JSON body" )
+        data = topology.update()
+        status, result = main.ONOSrest.send( '/restconf/data/topology', method="PUT", data=data, base="/onos" )    
+         
+        utilities.assert_equals(
+                expect='201',
+                actual=status,
+                onpass="Put Success",
+                onfail="Put Failed " + str( status ) + "," + str( result ) )                
+         
+        main.step( "GET data from the registered service after put operation" )
+        status, result = main.ONOSrest.send( '/restconf/data/topology', method="GET", base="/onos" )                
+        print( result )
+         
+        utilities.assert_equals(
+                expect='200',
+                actual=status,
+                onpass="Get Success",
+                onfail="Get Failed " + str( status ) + "," + str( result ) )                
+         
+        main.step( "PATCH to the registered service with JSON body" )
+        data = topology.replace()
+        status, result = main.ONOSrest.send( '/restconf/data/topology', method="PATCH", data=data, base="/onos" )    
+                 
+        utilities.assert_equals(
+                expect='204',
+                actual=status,
+                onpass="Patch Success",
+                onfail="Patch Failed " + str( status ) + "," + str( result ) )                
+         
+        main.step( "GET data from the registered service after patch operation" )
+        status, result = main.ONOSrest.send( '/restconf/data/topology', method="GET", base="/onos" )                
+        print( result )
+        
+        utilities.assert_equals(
+                expect='200',
+                actual=status,
+                onpass="Get Success",
+                onfail="Get Failed " + str( status ) + "," + str( result ) )                
+         
+        main.step( "DELETE data from the registered service" )
+        status, result = main.ONOSrest.send( '/restconf/data/topology/node=1', method="DELETE", base="/onos" )
+                         
+        utilities.assert_equals(
+                expect='200',
+                actual=status,
+                onpass="Delete Success",
+                onfail="Delete Failed " + str( status ) + "," + str( result ) )                
+         
+        main.step( "DELETE data from the registered service" )
+        status, result = main.ONOSrest.send( '/restconf/data/topology/node=2', method="DELETE", base="/onos" )
+        
+        utilities.assert_equals(
+                expect='200',
+                actual=status,
+                onpass="Delete Success",
+                onfail="Delete Failed " + str( status ) + "," + str( result ) )                
+         
         

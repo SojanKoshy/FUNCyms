@@ -39,18 +39,18 @@ def gitCloneAndBuild( main, path, url, forceBuild=False ):
             main.log.error( "Cloning git repository failed! " )
             main.cleanup()
             main.exit()
-    else:
-        if os.path.exists( dest + "/.git" ):
-            main.log.info( "Pulling latest code from github" )
-
-            main.ONOSbench.home = folder
-            pullResult = main.ONOSbench.gitPull()
-            if pullResult == main.TRUE:
-                buildRequired = True
-            main.ONOSbench.home = oldHome
-        else:
-            main.log.warn( "Skipping git pull since folder is already "
-                           + "present and is not git clone" )
+#     else:
+#         if os.path.exists( dest + "/.git" ):
+#             main.log.info( "Pulling latest code from github" )
+# 
+#             main.ONOSbench.home = folder
+#             pullResult = main.ONOSbench.gitPull()
+#             if pullResult == main.TRUE:
+#                 buildRequired = True
+#             main.ONOSbench.home = oldHome
+#         else:
+#             main.log.warn( "Skipping git pull since folder is already "
+#                            + "present and is not git clone" )
     if buildRequired:
         main.ONOSbench.handle.sendline( "cd " + path )
         main.ONOSbench.handle.expect( "cd " )
@@ -156,14 +156,14 @@ def ymsTestAppCommand( main, commandkey, params="" ):
     """
     def f(x):
         return {
-            "NB register service": "testNBRegister",
+            "NB register service": "testNbiRegister",
             "NB unregister service": "testNBRegister",
             "SB add device schema": "testNBRegister",
             "SB encode operation": "testNBRegister",
             "SB decode operation": "testNBRegister",
         }[x]
         
-    output = self.sendline( "ymstest " + f( commandkey ) + params)
+    output = main.ONOScli1.sendline( "yms-test " + f( commandkey ) + params)
     if "Passed:1" in output:
         return main.TRUE
     else:
