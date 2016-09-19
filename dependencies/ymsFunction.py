@@ -6,6 +6,7 @@
 import os
 import pexpect
 import time
+from ubuntutweak.gui.widgets import Switch
 
 def gitCloneAndBuild( main, path, url, forceBuild=False ):
     """
@@ -15,7 +16,7 @@ def gitCloneAndBuild( main, path, url, forceBuild=False ):
     On Failure, exits the test
     """
 
-    folder = url.split( "/" )[-1].split( "." )[0]
+    folder = url.split( "/" )[ -1 ].split( "." )[ 0 ]
     dest = path + "/" + folder
 
     oldHome = main.ONOSbench.home
@@ -90,9 +91,9 @@ def cleanInstall( main, folder, skipTest=True, mciTimeout=300 ):
             main.ONOSbench.handle.expect( "mvn clean install" )
         else:
             main.ONOSbench.handle.sendline( "mvn clean install -DskipTests" +
-                                  " -Dcheckstyle.skip -U -T 1C" )
+                                            " -Dcheckstyle.skip -U -T 1C" )
             main.ONOSbench.handle.expect( "mvn clean install -DskipTests" +
-                                  " -Dcheckstyle.skip -U -T 1C" )
+                                          " -Dcheckstyle.skip -U -T 1C" )
         while True:
             i = main.ONOSbench.handle.expect( [
                 'There\sis\sinsufficient\smemory\sfor\sthe\sJava\s' +
@@ -139,3 +140,34 @@ def cleanInstall( main, folder, skipTest=True, mciTimeout=300 ):
         main.log.exception( "Uncaught exception!" )
         main.cleanup()
         main.exit()
+
+def startApps( main ):
+    """
+        This function starts the restconf and ymstest apps in onos node
+    """
+
+    startResult = main.FALSE
+    startResult = main.ONOScli1.activateApp( appName="org.onosproject.resconf" )
+    startResult &= main.ONOScli1.activateApp( appName="org.onosproject.ymstest" )
+    return startResult
+
+def ymsTestAppCommand( main, commandkey, params="" ):
+    """
+        This function executes ymstest CLIs and returns the result 
+    """
+    def f(x):
+        return {
+            "NB register service": "testNBRegister",
+            "NB unregister service": "testNBRegister",
+            "SB add device schema": "testNBRegister",
+            "SB encode operation": "testNBRegister",
+            "SB decode operation": "testNBRegister",
+        }[x]
+        
+    output = self.sendline( "ymstest " + f( commandkey ) + params)
+    if "Passed:1" in output:
+        return main.TRUE
+    else:
+        main.log.error( "Failed to process the ymstest command " + str( output ) )    
+        return main.FALSE
+    

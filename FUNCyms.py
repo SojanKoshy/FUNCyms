@@ -10,11 +10,10 @@ CASE2:
 CASE3:
 Case4: Uninstalling the app
 """
-class FUNCyms:
 
+class FUNCyms:
     def __init__( self ):
         self.default = ''
-
 
     def CASE1( self, main ):
         """
@@ -49,7 +48,7 @@ class FUNCyms:
         main.log.info( "ONOS Single node start " )
         main.case( "Setting up test environment" )
         main.caseExplanation = "Setup the test environment including " + \
-                                "installing ONOS, start ONOS."
+                               "installing ONOS, start ONOS."
 
         PULLCODE = False
         if main.params[ 'GIT' ][ 'pull' ] == 'True':
@@ -68,10 +67,9 @@ class FUNCyms:
         cellName = main.params[ 'ENV' ][ 'cellName' ]
         ipList = os.getenv( main.params[ 'CTRL' ][ 'ip1' ] )
 
-
         main.testOnDirectory = re.sub( "(/tests)$", "", main.testDir )
         main.dependencyPath = main.testOnDirectory + \
-                                  main.params[ 'DEPENDENCY' ][ 'path' ]
+                              main.params[ 'DEPENDENCY' ][ 'path' ]
 
         wrapperFile1 = main.params[ 'DEPENDENCY' ][ 'wrapper1' ]
         main.ymsFunction = imp.load_source( wrapperFile1,
@@ -82,8 +80,8 @@ class FUNCyms:
         main.log.info( "Removing raft logs" )
         main.ONOSbench.onosRemoveRaftLogs()
 
-        main.CLIs = []
-        main.nodes = []
+        main.CLIs = [ ]
+        main.nodes = [ ]
         main.numCtrls = 1
 
         for i in range( 1, main.numCtrls + 1 ):
@@ -143,8 +141,8 @@ class FUNCyms:
             gitPullResult = main.ONOSbench.gitPull()
             # values of 1 or 3 are good
             utilities.assert_lesser( expect=0, actual=gitPullResult,
-                                      onpass="Git pull successful",
-                                      onfail="Git pull failed" )
+                                     onpass="Git pull successful",
+                                     onfail="Git pull failed" )
 
         # main.ONOSbench.getVersion( report=True )
 
@@ -163,29 +161,30 @@ class FUNCyms:
         main.step( "Creating ONOS package" )
         packageResult = main.ONOSbench.buckBuild()
         utilities.assert_equals( expect=main.TRUE,
-                                     actual=packageResult,
-                                     onpass="Successfully created ONOS package",
-                                     onfail="Failed to create ONOS package" )
+                                 actual=packageResult,
+                                 onpass="Successfully created ONOS package",
+                                 onfail="Failed to create ONOS package" )
 
         main.step( "Installing ONOS package" )
         onosInstallResult = main.ONOSbench.onosInstall( 
-                options="-f", node=main.nodes[0].ip_address )
+                options="-f", node=main.nodes[ 0 ].ip_address )
         utilities.assert_equals( expect=main.TRUE, actual=onosInstallResult,
                                  onpass="ONOS install successful",
                                  onfail="ONOS install failed" )
 
         main.step( "Checking if ONOS is up yet" )
-        print main.nodes[0].ip_address
+        print main.nodes[ 0 ].ip_address
         for i in range( 2 ):
-            onos1Isup = main.ONOSbench.isup( main.nodes[0].ip_address )
+            onos1Isup = main.ONOSbench.isup( main.nodes[ 0 ].ip_address )
             if onos1Isup:
                 break
         utilities.assert_equals( expect=main.TRUE, actual=onos1Isup,
                                  onpass="ONOS startup successful",
                                  onfail="ONOS startup failed" )
+        
         main.step( "Starting ONOS CLI sessions" )
-        print main.nodes[0].ip_address
-        cliResults = main.ONOScli1.startOnosCli( main.nodes[0].ip_address )
+        print main.nodes[ 0 ].ip_address
+        cliResults = main.ONOScli1.startOnosCli( main.nodes[ 0 ].ip_address )
         utilities.assert_equals( expect=main.TRUE, actual=cliResults,
                                  onpass="ONOS cli startup successful",
                                  onfail="ONOS cli startup failed" )
@@ -194,12 +193,36 @@ class FUNCyms:
         appCheck = main.ONOScli1.appToIDCheck()
 
         if appCheck != main.TRUE:
-            main.log.warn( main.CLIs[0].apps() )
-            main.log.warn( main.CLIs[0].appIDs() )
+            main.log.warn( main.CLIs[ 0 ].apps() )
+            main.log.warn( main.CLIs[ 0 ].appIDs() )
             utilities.assert_equals( expect=main.TRUE, actual=appCheck,
-                                 onpass="App Ids seem to be correct",
-                                 onfail="Something is wrong with app Ids" )
+                                     onpass="App Ids seem to be correct",
+                                     onfail="Something is wrong with app Ids" )
         if cliResults == main.FALSE:
             main.log.error( "Failed to start ONOS,stopping test" )
             main.cleanup()
             main.exit()
+
+
+    def CASE2( self, main ):
+        """
+        - Start restconf and ymstest apps
+        - Register service for NB in YMS
+        """
+
+        main.step( "Starting Restconf and ymstest app" )
+        main.assertReturnString = "Assertion result for starting Restconf and ymstest app"
+        testResult = main.ymsFunction.startApps( main )
+
+        utilities.assert_equals( expect=main.TRUE,
+                                 actual=testResult,
+                                 onpass=main.assertReturnString,
+                                 onfail=main.assertReturnString )
+        
+        
+        cliResults = main.ymsFunction.ymsTestAppCommand( main, "NB register service" )
+        utilities.assert_equals( expect=main.TRUE, actual=cliResults,
+                                 onpass="ONOS cli startup successful",
+                                 onfail="ONOS cli startup failed" )
+
+        
