@@ -6,7 +6,6 @@
 import os
 import pexpect
 import time
-from ubuntutweak.gui.widgets import Switch
 
 def gitCloneAndBuild( main, path, url, forceBuild=False ):
     """

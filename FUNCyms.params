@@ -7,7 +7,7 @@
 #CASE3:
 #Case4: Uninstalling the app
 
-    <testcases>1</testcases>
+    <testcases>1,2</testcases>
 
     <DEPENDENCY>
         <path>/tests/FUNC/FUNCyms/dependencies/</path>
