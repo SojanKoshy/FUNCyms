@@ -42,7 +42,7 @@ def gitCloneAndBuild( main, path, url, forceBuild=False ):
 #     else:
 #         if os.path.exists( dest + "/.git" ):
 #             main.log.info( "Pulling latest code from github" )
-# 
+#
 #             main.ONOSbench.home = folder
 #             pullResult = main.ONOSbench.gitPull()
 #             if pullResult == main.TRUE:
@@ -154,7 +154,7 @@ def ymsTestAppCommand( main, commandkey, params="" ):
     """
         This function executes ymstest CLIs and returns the result 
     """
-    def f(x):
+    def f( x ):
         return {
             "NB register service": "testNbiRegister",
             "NB unregister service": "testNBRegister",
@@ -162,11 +162,11 @@ def ymsTestAppCommand( main, commandkey, params="" ):
             "SB encode operation": "testNBRegister",
             "SB decode operation": "testNBRegister",
         }[x]
-        
-    output = main.ONOScli1.sendline( "yms-test " + f( commandkey ) + params)
+
+    output = main.ONOScli1.sendline( "yms-test " + f( commandkey ) + params )
     if "Passed:1" in output:
         return main.TRUE
     else:
-        main.log.error( "Failed to process the ymstest command " + str( output ) )    
+        main.log.error( "Failed to process the ymstest command " + str( output ) )
         return main.FALSE
-    
+

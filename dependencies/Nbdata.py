@@ -6,14 +6,14 @@ from requests.auth import HTTPBasicAuth
 
 class Topology:
 
-    def __init__(self):
-        
+    def __init__( self ):
+
         self.node_id = [1, 2, 3, 4]
         self.node_prop = ["A", 200, -1, ""]
-        self.number_of_tp = [1, 2, 3, 4]        
+        self.number_of_tp = [1, 2, 3, 4]
         self.tp_id = [100, 200, 300, 400]
-      
-    def create(self):      
+
+    def create( self ):
         data = {
             "node": [
                 {
@@ -32,9 +32,9 @@ class Topology:
                 }
             ]
         }
-        return json.dumps(data, indent=4)
-    
-    def update(self):
+        return json.dumps( data, indent=4 )
+
+    def update( self ):
         data = {
             "node": [
                 {
@@ -55,10 +55,10 @@ class Topology:
                     "node-id": self.node_id[1]
                 }
             ]
-        }      
-        return json.dumps(data, indent=4)
-        
-    def replace(self):
+        }
+        return json.dumps( data, indent=4 )
+
+    def replace( self ):
         data = {
             "node": [
                 {
@@ -90,6 +90,6 @@ class Topology:
                     "node-id": self.node_id[1]
                 }
             ]
-        }      
-        return json.dumps(data, indent=4)
-        
+        }
+        return json.dumps( data, indent=4 )
+
